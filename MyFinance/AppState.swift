@@ -161,11 +161,17 @@ final class AppState: ObservableObject {
         return points
     }
 
+    var averageMonthlySavings: Double {
+        let points = lastSixMonths().filter { $0.income > 0 || $0.expense > 0 }
+        guard !points.isEmpty else { return 0 }
+        let net = points.reduce(0.0) { $0 + ($1.income - $1.expense) }
+        return net / Double(points.count)
+    }
+
     func monthsToGoal(_ goal: Goal) -> Int? {
         let left = goal.target - goal.saved
         if left <= 0 { return 0 }
-        let now = Date()
-        let rate = total(kind: .income, month: now) - total(kind: .expense, month: now)
+        let rate = averageMonthlySavings
         guard rate > 0 else { return nil }
         return Int((left / rate).rounded(.up))
     }
