@@ -33,6 +33,7 @@ struct AddTransactionSheet: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .onChange(of: kind) { _ in categoryId = "" }
 
                     HStack {
                         TextField("Сумма", text: $amountText)
